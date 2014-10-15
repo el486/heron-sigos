@@ -131,6 +131,13 @@ var treeTheme = [
 							{nodeType: "gx_layer", layer: "Obras_SIGOS_Dipac" },
 							{nodeType: "gx_layer", layer: "Trazas_SIGOS_Dipac" }
 						]
+				},
+				{
+					text:'Arquitectura', children:
+						[
+							{nodeType: "gx_layer", layer: "Obras_SIGOS_Arquitectura" },
+							{nodeType: "gx_layer", layer: "Trazas_SIGOS_Arquitectura" }
+						]
 				}
 				]}
 
@@ -161,6 +168,8 @@ Heron.layout = {
 					width: '100%',
 					height: 65,
 					bodyBorder: false,
+					collapsible:true,
+					header:false,
 					border: true,
 					items : [
 							{
@@ -495,6 +504,12 @@ Heron.layout = {
 							),
 							layerRefViv = new OpenLayers.Layer.WMS("Obras_SIGOS_Vivienda",wmsSigos,
 								{layers: ['SigosGis:vivienda_obras_ref'],transparent: true, format:'image/png', singleTile: true },layerOptions
+							),
+							layerTrazasArq = new OpenLayers.Layer.WMS("Trazas_SIGOS_Arquitectura",wmsSigos,
+								{layers: ['SigosGis:arquitectura_obras_sigos_total'],transparent: true, format:'image/png', singleTile: true }, layerOptions
+							),
+							layerRefArq = new OpenLayers.Layer.WMS("Obras_SIGOS_Arquitectura",wmsSigos,
+								{layers: ['SigosGis:arquitectura_obras_ref'],transparent: true, format:'image/png', singleTile: true },layerOptions
 							),
 							layerTrazasDipac = new OpenLayers.Layer.WMS("Trazas_SIGOS_Dipac",wmsSigos,
 								{layers: ['SigosGis:dipac_obras_sigos_total'],transparent: true, format:'image/png', singleTile: true },layerOptions

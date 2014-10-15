@@ -22,6 +22,8 @@ filters=[
 	})
 ];
 
+
+
 layerwfs = new OpenLayers.Layer.Vector("Obras Seleccionadas",{
 
 								strategies: [new OpenLayers.Strategy.Fixed()]
@@ -64,12 +66,12 @@ var popup
 			//anchored: true,
 			unpinned:true,
 			anchorPosition: 'auto',
-            html: "<div style='font-size:.9em'>ID Obra: " + feature.attributes.id_obra 
-									 +'<a href="javascript:void(0)" onclick="popupObras(\''+feature.attributes.id_obra+'\');">' + '<b> +info</b>' + '</a>'
+            html: "<div style='font-size:.9em'>ID Obra: " + feature.attributes.id_obra +' '
+									 +'<a href="javascript:void(0)" onclick="popupObras(\''+feature.attributes.id_obra+'\');"><b>+info</b></a>'
 									 +"<br>Nombre: "+ feature.attributes.nombre
 									 +"<br>Etapa: "+ feature.attributes.etapa
 									 +"<br>Reparticion: "+ feature.attributes.reparticion
-									 +"<br>Geometria: "+ feature.attributes.geom
+									 //+"<br>Geometria: "+ feature.attributes.geom
 									 +"</div>",
             maximizable: false,
             collapsible: true
@@ -82,7 +84,7 @@ var popup
             }
         });
         popup.show();
-		console.log(popup.location);
+		//console.log(popup.location);
     }
 
     // create popup on "featureselected"
@@ -105,7 +107,7 @@ var postData = '<wfs:GetFeature xmlns:wfs="http://www.opengis.net/wfs" '
 +'</wfs:GetFeature>';
 var req = new XMLHttpRequest();
 req.open("POST", url, true);
-req.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
+//req.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
 req.setRequestHeader('Content-type', 'application/xml');
 req.onreadystatechange = function () {
   if (req.readyState != 4) return;
@@ -117,6 +119,7 @@ req.onreadystatechange = function () {
   var gmlReader = new OpenLayers.Format.GML({ extractAttributes: true });
   var features = gmlReader.read(req.responseText);
   layerTrazas.addFeatures(features);
+  if (filters.length==2) Heron.App.map.zoomToExtent(layerTrazas.getDataExtent());
 }
 if (req.readyState == 4) return;
 req.send(postData);

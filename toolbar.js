@@ -291,7 +291,7 @@ var toolBarItems=[
 		{type: "measurelength", options: {geodesic: true}},
 		{type: "measurearea", options: {geodesic: true}},
 		{type: "-"},
-		{type: "namesearch",
+		/*{type: "namesearch",
 			// Optional options, see NominatimSearchCombo.js
 			options : {
 				zoom: 8,
@@ -302,7 +302,7 @@ var toolBarItems=[
 				//tpl: '<tpl for="."><tpl for="address"><div class="x-combo-list-item">{road} {city} {state} {postcode} {country}</div></tpl></tpl>',
                 //displayTpl: '<tpl for="."><tpl for="address">{road} {city} {state} {country}</tpl></tpl>'
 			}
-		},
+		},*/
 		{type: "coordinatesearch", options: {
 
 		// === Full demo configuration ===
@@ -834,5 +834,130 @@ var toolBarItems=[
 			}
          },
 		{type: "-"},
-		{type: "help", options: {tooltip: 'Ayuda', contentUrl: 'help.html'}}//,
+		{type: "help", options: {tooltip: 'Ayuda', contentUrl: 'help.html'}},
+		{  create : function(mapPanel, options) {
+				// A trivial handler
+				options.handler = function() {
+				Ext.Msg.prompt('ID Obra', 'Ingrese ID Obra:', function(btn, text){
+				 if (btn == 'ok'){
+				 	var layers = Heron.App.map.getLayersByName("Capa Agregada");
+					var features = layers[0].features;
+					if (features.length==0){
+					Ext.Msg.alert('Error','No hay geometrías que agregar. Agregue una con la herramienta de carga.');
+					}else{
+						for (var feat in features) {
+							if(typeof features[feat].geometry!='undefined'){
+								featGeom=features[feat].geometry;
+								if(featGeom.CLASS_NAME=='OpenLayers.Geometry.Collection'){
+								//console.log(featGeom);
+									for (var feat2 in featGeom.components){
+									if(featGeom.components[feat2].CLASS_NAME=='OpenLayers.Geometry.Polygon'){	
+										//console.log (featGeom.components[feat2]);
+										var vector=new OpenLayers.Feature.Vector(featGeom.components[feat2],null,null);
+										var geom= new OpenLayers.Format.WKT().write(vector);
+										//console.log(geom);
+											Ext.Ajax.request({
+												url: 'php/editarTest.php',
+												method: 'POST',          
+												params: {
+													id: text,
+													geom :geom,
+													action:'add'
+												},
+												success: function( r, o ){
+													console.log('Success'+ r.responseText );
+												},
+												failure: function( r, o ) {
+													console.log( "fail: " + r.responseText );
+												}
+											});
+										}
+									}
+								}else{
+									var geom= new OpenLayers.Format.WKT().write(features[feat]);
+									//console.log(features[feat]);
+									//console.log(geom);
+									Ext.Ajax.request({
+										url: 'php/editarTest.php',
+										method: 'POST',          
+										params: {
+											id: text,
+											geom :geom,
+											action:'add'
+										},
+										success: function( r, o ){
+											console.log('Success'+ r.responseText );
+										},
+										failure: function( r, o ) {
+											console.log( "fail: " + r.responseText );
+										}
+									});
+								}								
+							}
+						}
+					}
+				}
+				});
+				
+				};
+				// Provide an ExtJS Action object. If you use an OpenLayers control, you need to provide a GeoExt Action object.
+				return new Ext.Action(options);
+			},
+
+			/* Options to be passed to your create function. */
+			options : {
+				tooltip: 'TEST',
+				//iconCls: "icon-printscr",
+				text: "Add",
+				enableToggle : false,
+				pressed : false,
+				id: "edit_add",
+				toggleGroup: "toolGroup",
+				msg: 'Test'
+			 }
+			
+		},
+		{  //editor
+			
+			create : function(mapPanel, options) {
+				// A trivial handler
+				options.handler = function() {
+				//Ext.getCmp('hr-info-west').expand(true);
+				Ext.Msg.prompt('ID Obra', 'Ingrese ID Obra:', function(btn, text){
+				if (btn == 'ok'){Ext.Ajax.request({
+							url: 'php/editarTest.php',
+							method: 'POST',          
+							params: {
+								id: text,
+								geom :'',
+								action:'delete'
+							},
+							success: function( r, o ){
+								Ext.Msg.alert('Informacion','Se eliminaron '+ r.responseText +' elementos.' );
+							},
+							failure: function( r, o ) {
+								Ext.Msg.alert( "Error: " + r.responseText );
+							}
+						});
+					}
+					});
+				
+				};
+				// Provide an ExtJS Action object. If you use an OpenLayers control, you need to provide a GeoExt Action object.
+				return new Ext.Action(options);
+			},
+
+			/* Options to be passed to your create function. */
+			options : {
+				tooltip: 'TEST',
+				//iconCls: "icon-printscr",
+				text: "Delete",
+				enableToggle : false,
+				pressed : false,
+				id: "edit_delete",
+				toggleGroup: "toolGroup",
+				msg: 'Test'
+			 }
+			
+		}
 	]

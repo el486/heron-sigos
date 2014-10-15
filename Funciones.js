@@ -224,6 +224,8 @@ Ext.onReady(function() {
 	var partidosOver = new OpenLayers.Layer.WMS("Partidos","http://192.168.1.28/geoserver/SigosGis/wms?",
 								{layers: 'SigosGis:partidos',transparent: true, format:'image/png', singleTile: true }, 
 								{visibility: true, displayInLayerSwitcher:true,isBaseLayer:true}); 
+								
+	var stamenOver = new OpenLayers.Layer.Stamen("toner");
 	
 	var overviewOptions = {
 		numZoomLevels:1,
@@ -242,6 +244,9 @@ Ext.onReady(function() {
 		getAjax('./php/buscarPlanoId.php',params,'infoDIV');
 		}
 	if (obraUrl!=""){	
+		var header=Ext.getCmp('hr-container-north');
+		header.collapse(true);
+		//console.log(header);
 		params='id='+obraUrl;
 		getAjax('./php/buscarObraId.php',params,'infoDIV');
 		}
